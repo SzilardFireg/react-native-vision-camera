@@ -21,6 +21,18 @@ buildscript {
   }
 }
 
+
+def REACT_NATIVE_VERSION = new File(['node', '--print',"JSON.parse(require('fs').readFileSync(require.resolve('react-native/package.json'), 'utf-8')).version"].execute(null, rootDir).text.trim())
+
+allprojects {
+  configurations.all {
+        resolutionStrategy {
+            // Remove this override in 0.65+, as a proper fix is included in react-native itself.
+            force "com.facebook.react:react-native:" + REACT_NATIVE_VERSION
+        }
+    }
+}
+
 def resolveBuildType() {
     Gradle gradle = getGradle()
     String tskReqStr = gradle.getStartParameter().getTaskRequests()["args"].toString()
@@ -166,7 +178,7 @@ android {
 
 dependencies {
   //noinspection GradleDynamicVersion
-//   implementation "com.facebook.react:react-android:+"
+  implementation "com.facebook.react:react-android:+"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 
   if (enableCodeScanner) {
